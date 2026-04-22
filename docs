@@ -1,0 +1,189 @@
+# Bookkeeping Application Documentation
+
+## Overview
+This is a simple yet powerful personal finance management application for Android that helps users track their income and expenses. The app features category management, transaction recording with date/time selection, and summary functionality for year/month/week and custom date ranges.
+
+## Features
+
+### 1. Category Management
+- Create, edit, and delete custom categories for both income and expenses
+- Predefined default categories for quick start:
+  - **Income**: Salary, Bonus, Investment, Other Income
+  - **Expenses**: Food, Transportation, Shopping, Entertainment, Housing, Healthcare, Education, Other Expenses
+- Each category can have an emoji icon and color for visual identification
+- Default categories cannot be deleted to maintain data integrity
+
+### 2. Expense/Income Recording
+- Record transactions with:
+  - Description/notes
+  - Date and time selection (using native pickers)
+  - Multiple sub-items per transaction (for split transactions)
+  - Category selection for each sub-item
+  - Amount entry for each sub-item
+  - Recurring transaction toggle
+- Automatic total calculation from sub-items
+- Visual feedback for income (green) vs expense (red) amounts
+
+### 3. Summary Functionality
+- View financial summaries for different time periods:
+  - **Year**: Full calendar year
+  - **Month**: Current calendar month
+  - **Week**: ISO week (Monday to Sunday)
+  - **Custom**: User-defined date range
+- Summary cards showing:
+  - Total income
+  - Total expenses
+  - Net amount (income - expenses)
+- Category breakdown visualization
+- Recent transactions list
+
+### 4. User Interface
+- Clean, modern design using Material 3 components
+- Bottom navigation for easy switching between:
+  - Home (Summary)
+  - Record (Transaction entry)
+  - Categories (Category management)
+- Responsive layout that works on various screen sizes
+- Dark/light theme support with dynamic colors on Android 12+
+- Intuitive touch targets and spacing for comfortable mobile use
+
+## Technical Implementation
+
+### Architecture
+The application follows a layered architecture:
+- **Presentation Layer**: Jetpack Compose UI components
+- **Data Layer**: Repository pattern with JSON file persistence
+- **Model Layer**: Kotlin data classes for business entities
+
+### Data Persistence
+- Uses local JSON file storage (`bookkeeping_data.json` in app's files directory)
+- No external dependencies required (works with existing Gradle configuration)
+- Automatic data backup through Android's standard backup mechanisms
+- Data survives app updates and device reboots
+
+### Key Classes
+- `Category`: Represents an income/expense category with metadata
+- `Expense`: Represents a financial transaction with amount, type, and timestamp
+- `SubItem`: Represents a line item within a transaction
+- `BookkeepingRepository`: Handles data loading, saving, and querying
+- Various Compose screens for UI presentation
+
+## Usage Guide
+
+### Getting Started
+1. Launch the app - default categories are automatically created
+2. Navigate to "Categories" to view or modify default categories
+3. Go to "Record" to add your first transaction:
+   - Add a description (optional)
+   - Select date and time
+   - Add one or more sub-items:
+     - Enter item name
+     - Select category
+     - Enter amount
+   - Save the transaction
+4. Visit "Home" to view your financial summary
+
+### Managing Categories
+- Tap the "+" button to add a new category
+- Enter name, select emoji icon, choose color
+- Specify whether it's for income or expenses
+- Default categories are marked and cannot be deleted
+- To edit a category, tap on it (except defaults) then modify fields
+- To delete a custom category, tap the delete icon in the category card
+
+### Recording Transactions
+1. Tap the "+" floating action button in the Record screen
+2. Add a description/note for the transaction (optional)
+3. Select date by tapping the date field
+4. Select time by tapping the time field
+5. Toggle "Recurring" if this is a repeating transaction
+6. Add sub-items:
+   - Tap "+" to add a sub-item
+   - Enter item name (e.g., "Groceries", "Gas")
+   - Select category (income/expense categories shown based on type)
+   - Enter amount
+   - Repeat for additional sub-items if needed
+7. View the calculated total at the bottom
+8. Tap "Save" to record the transaction
+
+### Viewing Summaries
+1. Navigate to the Home screen
+2. Select time period using the segmented buttons:
+   - Year: Annual summary
+   - Month: Monthly summary (default)
+   - Week: Weekly summary (ISO week)
+   - Custom: Define specific start and end dates
+3. View summary cards for income, expenses, and net amount
+4. Scroll down to see category breakdown
+5. See recent transactions at the bottom
+
+## Design Decisions
+
+### Why JSON Persistence?
+- Avoids adding new dependencies (Room, DataStore) as requested
+- Simple to implement and debug
+- Sufficient for personal finance data volumes
+- Easy to backup and migrate
+
+### Why Manual Navigation Instead of Navigation Compose?
+- Avoids adding navigation-compose dependency
+- Simpler implementation for a 3-screen app
+- Maintains the constraint of not changing Gradle/configuration
+
+### Why Compose for UI?
+- Modern Android UI toolkit
+- Declarative syntax reduces boilerplate
+- Excellent Material 3 support
+- Compose is already included in project dependencies
+
+### Why LocalDateTime for Timestamps?
+- Accurate date/time handling without timezone complexity for personal use
+- ISO format ensures consistent serialization
+- Easy to extract year/month/week components for summaries
+
+## Future Enhancements
+- Backup/restore functionality to external storage
+- Data export/export (CSV, JSON)
+- Budget setting and tracking
+- Charts and visualizations for spending patterns
+- Multiple account/wallet support
+- Tax category and reporting features
+- Cloud sync option
+
+## Limitations
+- Data is stored locally only (no cloud sync)
+- No internet permissions required
+- Limited to single device usage
+- JSON file may need migration if data structure changes significantly
+- No password protection or data encryption (uses Android's sandbox security)
+
+## Technical Requirements
+- Minimum SDK: Android 8.0 (API level 26) - set to 30 in build.gradle
+- Target SDK: Android 12 (API level 31) - set to 36 in build.gradle
+- Requires Jetpack Compose and Material 3 dependencies (already included)
+- No additional permissions needed
+
+## File Structure
+```
+app/
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/example/myapplication/
+│   │   │       ├── MainActivity.kt
+│   │   │       ├── ui/
+│   │   │       │   └── theme/ (Theme.kt, Color.kt, Type.kt)
+│   │   │       └── bookkeeping/
+│   │   │           ├── data/ (BookkeepingRepository.kt)
+│   │   │           ├── model/ (Category.kt, Expense.kt, SubItem.kt)
+│   │   │           └── ui/screens/ (SummaryScreen.kt, ExpenseRecordingScreen.kt, CategoryManagementScreen.kt)
+│   │   └── res/ (resources)
+│   └── test/ (unit tests)
+└── docs/ (this documentation)
+```
+
+## Generated APK
+The application can be installed directly using the generated debug APK:
+- Location: `app/build/outputs/apk/debug/app-debug.apk`
+- Installation: Copy to Android device and open file, or use `adb install`
+- Note: This is a debug build suitable for testing and personal use
